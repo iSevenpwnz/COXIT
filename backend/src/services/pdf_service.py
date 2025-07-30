@@ -1,5 +1,6 @@
 """PDF processing service."""
 import uuid
+import warnings
 from io import BytesIO
 from pathlib import Path
 from typing import BinaryIO
@@ -8,6 +9,9 @@ import fitz  # PyMuPDF
 import pdfplumber
 from PyPDF2 import PdfReader
 from fastapi import UploadFile
+
+# Suppress font parsing warnings from PDF libraries
+warnings.filterwarnings("ignore", message=".*FontBBox.*")
 
 from ..config import settings
 from ..exceptions import (
