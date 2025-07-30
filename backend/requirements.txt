@@ -3,3 +3,7 @@ uvicorn[standard]
 python-multipart
 pydantic
 PyPDF2
+PyMuPDF
+pdfplumber
+openai
+python-dotenv
