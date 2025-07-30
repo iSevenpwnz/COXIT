@@ -9,7 +9,8 @@ from ..services.storage_service import StorageService
 from ..exceptions import (
     PDFProcessingError,
     OpenAIError,
-    SummaryNotFoundError
+    SummaryNotFoundError,
+    DuplicateFileError
 )
 
 router = APIRouter()
@@ -47,6 +48,17 @@ async def upload_pdf(
         # Read file contents
         contents = await file.read()
         
+        # Calculate file hash for duplicate detection
+        file_hash = PDFService.calculate_file_hash(contents)
+        
+        # Check for duplicates
+        existing_file = StorageService.check_duplicate_file(file_hash)
+        if existing_file:
+            raise DuplicateFileError(
+                f"File '{existing_file.original_filename}' already exists. "
+                f"Uploaded on {existing_file.created_at[:19].replace('T', ' ')}"
+            )
+        
         # Validate the upload
         num_pages = PDFService.validate_upload(file, contents)
         
@@ -66,6 +78,9 @@ async def upload_pdf(
         size_mb = round(len(contents) / (1024 * 1024), 2)
         metadata = StorageService.create_metadata(
             file_id=file_id,
+            filename=f"{file_id}.pdf",
+            original_filename=file.filename or "unknown.pdf",
+            file_hash=file_hash,
             pages=num_pages,
             size_mb=size_mb,
             text_length=len(parse_result.text),
@@ -84,6 +99,8 @@ async def upload_pdf(
             summary=summary
         )
         
+    except DuplicateFileError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except PDFProcessingError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except OpenAIError as e:

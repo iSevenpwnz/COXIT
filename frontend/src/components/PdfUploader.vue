@@ -74,6 +74,10 @@ const resetUpload = () => {
         <div v-if="isUploading" class="loading">
           <div class="spinner"></div>
           <p>Обробка PDF...</p>
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+          <p class="progress-text">AI аналізує контент та генерує резюме...</p>
         </div>
         
         <div v-else class="drop-content">
@@ -93,8 +97,10 @@ const resetUpload = () => {
         </div>
       </div>
       
-      <div v-if="validationError || uploadError" class="error">
-        ❌ {{ validationError?.message || uploadError }}
+      <div v-if="validationError || uploadError" class="error" :class="{ 'warning': uploadError?.includes('already exists') }">
+        <span v-if="uploadError?.includes('already exists')">⚠️</span>
+        <span v-else>❌</span>
+        {{ validationError?.message || uploadError }}
       </div>
     </div>
 
@@ -221,6 +227,34 @@ const resetUpload = () => {
   100% { transform: rotate(360deg); }
 }
 
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 3px;
+  animation: progress 3s ease-in-out infinite;
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
 .error {
   background: #fee;
   color: #c53030;
@@ -228,6 +262,12 @@ const resetUpload = () => {
   border-radius: 8px;
   margin-top: 1rem;
   text-align: center;
+}
+
+.error.warning {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fed7aa;
 }
 
 .result {

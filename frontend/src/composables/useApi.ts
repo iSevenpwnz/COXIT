@@ -22,6 +22,8 @@ interface UploadResult {
 interface HistoryItem {
   id: string
   filename: string
+  original_filename: string
+  file_hash: string
   summary_file: string
   created_at: string
   pages: number

@@ -1,9 +1,10 @@
 """PDF processing service."""
+import hashlib
 import uuid
 import warnings
 from io import BytesIO
 from pathlib import Path
-from typing import BinaryIO
+from typing import BinaryIO, Optional
 
 import fitz  # PyMuPDF
 import pdfplumber
@@ -88,6 +89,20 @@ class PDFService:
             images=images_count,
             tables=tables_count
         )
+    
+    @staticmethod
+    def calculate_file_hash(contents: bytes) -> str:
+        """Calculate SHA-256 hash of file contents.
+        
+        Args:
+            contents: File contents as bytes
+            
+        Returns:
+            Hexadecimal string representation of the hash
+        """
+        sha256_hash = hashlib.sha256()
+        sha256_hash.update(contents)
+        return sha256_hash.hexdigest()
     
     @staticmethod
     def save_pdf(contents: bytes) -> tuple[str, Path]:

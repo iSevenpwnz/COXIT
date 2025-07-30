@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useApi, type HistoryItem } from '@/composables/useApi'
 import { formatDate, formatNumber } from '@/utils/formatters'
 
@@ -10,6 +10,7 @@ const isLoading = ref(false)
 const selectedSummary = ref<string>('')
 const showSummaryModal = ref(false)
 const error = ref<string | null>(null)
+let autoRefreshInterval: number | null = null
 
 const loadHistory = async () => {
   isLoading.value = true
@@ -56,6 +57,17 @@ const clearError = () => {
 
 onMounted(() => {
   loadHistory()
+  
+  // Auto-refresh every 30 seconds
+  autoRefreshInterval = setInterval(() => {
+    loadHistory()
+  }, 30000)
+})
+
+onUnmounted(() => {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval)
+  }
 })
 </script>
 
@@ -63,9 +75,12 @@ onMounted(() => {
   <div class="history-card">
     <div class="history-header">
       <h2>📚 Остання історія</h2>
-      <button @click="loadHistory" class="refresh-btn" :disabled="isLoading">
-        🔄 Оновити
-      </button>
+      <div class="header-actions">
+        <span class="auto-refresh-indicator">🔄 Автооновлення</span>
+        <button @click="loadHistory" class="refresh-btn" :disabled="isLoading">
+          🔄 Оновити зараз
+        </button>
+      </div>
     </div>
 
     <div v-if="isLoading" class="loading">
@@ -87,7 +102,7 @@ onMounted(() => {
       >
         <div class="item-header">
           <div class="item-info">
-            <h3 class="item-title">📄 PDF {{ item.id.slice(0, 8) }}...</h3>
+            <h3 class="item-title">📄 {{ item.original_filename }}</h3>
             <p class="item-date">{{ formatDate(item.created_at) }}</p>
           </div>
           <button 
@@ -151,6 +166,21 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.auto-refresh-indicator {
+  font-size: 0.8rem;
+  color: #10b981;
+  background: #ecfdf5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  border: 1px solid #a7f3d0;
 }
 
 .history-header h2 {

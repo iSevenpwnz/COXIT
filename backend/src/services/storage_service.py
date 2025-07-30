@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from ..config import settings
-from ..exceptions import SummaryNotFoundError
+from ..exceptions import SummaryNotFoundError, DuplicateFileError
 from ..models import PDFMetadata
 
 
@@ -84,8 +84,29 @@ class StorageService:
             return f.read()
     
     @staticmethod
+    def check_duplicate_file(file_hash: str) -> Optional[PDFMetadata]:
+        """Check if file with this hash already exists.
+        
+        Args:
+            file_hash: SHA-256 hash of the file
+            
+        Returns:
+            PDFMetadata if duplicate found, None otherwise
+        """
+        all_metadata = StorageService._load_all_metadata()
+        
+        for item in all_metadata:
+            if item.get('file_hash') == file_hash:
+                return PDFMetadata(**item)
+        
+        return None
+    
+    @staticmethod
     def create_metadata(
         file_id: str,
+        filename: str,
+        original_filename: str,
+        file_hash: str,
         pages: int,
         size_mb: float,
         text_length: int,
@@ -107,7 +128,9 @@ class StorageService:
         """
         return PDFMetadata(
             id=file_id,
-            filename=f"{file_id}.pdf",
+            filename=filename,
+            original_filename=original_filename,
+            file_hash=file_hash,
             summary_file=f"{file_id}.txt",
             created_at=datetime.utcnow().isoformat(),
             pages=pages,

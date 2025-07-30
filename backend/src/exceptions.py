@@ -34,3 +34,8 @@ class OpenAIError(Exception):
 class SummaryNotFoundError(Exception):
     """Raised when requested summary doesn't exist."""
     pass
+
+
+class DuplicateFileError(Exception):
+    """Raised when uploaded file already exists."""
+    pass

@@ -8,6 +8,8 @@ class PDFMetadata(BaseModel):
     """PDF file metadata model."""
     id: str
     filename: str
+    original_filename: str
+    file_hash: str
     summary_file: str
     created_at: str
     pages: int
