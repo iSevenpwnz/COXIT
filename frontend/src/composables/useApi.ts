@@ -45,10 +45,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export function useApi() {
   const uploadFile = async (file: File): Promise<ApiResponse<UploadResult>> => {
-    const loading = ref(true)
-    const error = ref<string | null>(null)
-    const data = ref<UploadResult | null>(null)
-
     try {
       const formData = new FormData()
       formData.append('file', file)
@@ -63,25 +59,23 @@ export function useApi() {
         throw new Error(errorData.detail || 'Upload failed')
       }
 
-      data.value = await response.json()
+      const data = await response.json()
+      
+      return {
+        data,
+        error: null,
+        loading: false
+      }
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Unknown error occurred'
-    } finally {
-      loading.value = false
-    }
-
-    return {
-      data: data.value,
-      error: error.value,
-      loading: loading.value
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : 'Unknown error occurred',
+        loading: false
+      }
     }
   }
 
   const fetchHistory = async (): Promise<ApiResponse<HistoryItem[]>> => {
-    const loading = ref(true)
-    const error = ref<string | null>(null)
-    const data = ref<HistoryItem[] | null>(null)
-
     try {
       const response = await fetch(`${API_BASE_URL}/history`)
       
@@ -90,25 +84,22 @@ export function useApi() {
       }
 
       const result: HistoryResponse = await response.json()
-      data.value = result.history
+      
+      return {
+        data: result.history,
+        error: null,
+        loading: false
+      }
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to load history'
-    } finally {
-      loading.value = false
-    }
-
-    return {
-      data: data.value,
-      error: error.value,
-      loading: loading.value
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : 'Failed to load history',
+        loading: false
+      }
     }
   }
 
   const fetchSummary = async (summaryId: string): Promise<ApiResponse<string>> => {
-    const loading = ref(true)
-    const error = ref<string | null>(null)
-    const data = ref<string | null>(null)
-
     try {
       const response = await fetch(`${API_BASE_URL}/download/${summaryId}`)
       
@@ -117,17 +108,18 @@ export function useApi() {
       }
 
       const result: SummaryResponse = await response.json()
-      data.value = result.summary
+      
+      return {
+        data: result.summary,
+        error: null,
+        loading: false
+      }
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to load summary'
-    } finally {
-      loading.value = false
-    }
-
-    return {
-      data: data.value,
-      error: error.value,
-      loading: loading.value
+      return {
+        data: null,
+        error: err instanceof Error ? err.message : 'Failed to load summary',
+        loading: false
+      }
     }
   }
 

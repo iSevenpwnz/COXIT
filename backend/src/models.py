@@ -1,7 +1,7 @@
 """Data models and schemas."""
 from datetime import datetime
-from typing import Dict, Any
-from pydantic import BaseModel, Field
+from typing import Dict, Any, Optional
+from pydantic import BaseModel, Field, model_validator
 
 
 class PDFMetadata(BaseModel):
@@ -17,6 +17,17 @@ class PDFMetadata(BaseModel):
     text_length: int
     images: int
     tables: int
+    
+    @model_validator(mode='before')
+    @classmethod
+    def set_defaults(cls, data):
+        """Set defaults for backward compatibility."""
+        if isinstance(data, dict):
+            if 'original_filename' not in data:
+                data['original_filename'] = data.get('filename', 'unknown.pdf')
+            if 'file_hash' not in data:
+                data['file_hash'] = 'legacy'
+        return data
 
 
 class PDFParseResult(BaseModel):

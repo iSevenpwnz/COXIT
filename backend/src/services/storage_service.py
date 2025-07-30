@@ -60,7 +60,17 @@ class StorageService:
         # Get last N items and reverse for most recent first
         recent_items = all_metadata[-settings.HISTORY_DISPLAY_LIMIT:][::-1]
         
-        return [PDFMetadata(**item) for item in recent_items]
+        # Convert to PDFMetadata with backward compatibility
+        result = []
+        for item in recent_items:
+            try:
+                result.append(PDFMetadata(**item))
+            except Exception as e:
+                # Skip invalid items
+                print(f"Skipping invalid metadata item: {e}")
+                continue
+                
+        return result
     
     @staticmethod
     def get_summary(summary_id: str) -> str:
@@ -97,7 +107,11 @@ class StorageService:
         
         for item in all_metadata:
             if item.get('file_hash') == file_hash:
-                return PDFMetadata(**item)
+                try:
+                    return PDFMetadata(**item)
+                except Exception:
+                    # Skip invalid item
+                    continue
         
         return None
     

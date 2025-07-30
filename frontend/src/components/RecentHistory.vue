@@ -83,7 +83,12 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-if="isLoading" class="loading">
+    <div v-if="error" class="error-state">
+      <p class="error-message">❌ {{ error }}</p>
+      <button @click="loadHistory" class="retry-btn">Спробувати ще раз</button>
+    </div>
+
+    <div v-else-if="isLoading" class="loading">
       <div class="spinner"></div>
       <p>Завантаження...</p>
     </div>
@@ -246,6 +251,34 @@ onUnmounted(() => {
   font-size: 0.9rem;
   color: #9ca3af;
   margin: 0.5rem 0 0 0;
+}
+
+.error-state {
+  text-align: center;
+  padding: 2rem;
+  background: #fef2f2;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+
+.error-message {
+  color: #dc2626;
+  margin: 0 0 1rem 0;
+  font-weight: 500;
+}
+
+.retry-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.retry-btn:hover {
+  background: #b91c1c;
 }
 
 .history-list {
