@@ -5,7 +5,7 @@ AI-powered PDF summarization service that processes large PDF files (up to 100 p
 ## Features
 
 - **PDF Upload**: Drag & drop or file browser upload with duplicate detection
-- **AI Summarization**: OpenAI-powered content analysis and summary generation  
+- **AI Summarization**: OpenAI-powered content analysis and summary generation
 - **Content Analysis**: Extracts text, images, and tables from PDFs
 - **History**: Auto-refreshing list of recent uploads with original filenames
 - **Real-time Processing**: Live progress tracking and status updates
@@ -13,10 +13,12 @@ AI-powered PDF summarization service that processes large PDF files (up to 100 p
 ## Quick Start
 
 ### Prerequisites
+
 - Docker & Docker Compose
 - OpenAI API key
 
 ### Setup & Run
+
 ```bash
 # Clone and setup
 git clone <repository-url>
@@ -35,6 +37,7 @@ docker-compose up --build -d
 ## Development
 
 ### Backend (FastAPI + Python)
+
 ```bash
 cd backend
 python -m venv venv
@@ -44,6 +47,7 @@ uvicorn app:app --reload --port 8000
 ```
 
 ### Frontend (Vue 3 + TypeScript)
+
 ```bash
 cd frontend
 npm install
@@ -52,22 +56,23 @@ npm run build  # Production build
 ```
 
 ### Testing
+
 ```bash
 # Backend tests
 cd backend && python -m pytest
 
-# Frontend tests  
+# Frontend tests
 cd frontend && npm run test
 ```
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/upload` | Upload PDF for processing |
-| `GET` | `/history` | Get recent uploads (last 5) |
-| `GET` | `/download/{id}` | Download summary by ID |
-| `GET` | `/health` | Service health check |
+| Method | Endpoint         | Description                 |
+| ------ | ---------------- | --------------------------- |
+| `POST` | `/upload`        | Upload PDF for processing   |
+| `GET`  | `/history`       | Get recent uploads (last 5) |
+| `GET`  | `/download/{id}` | Download summary by ID      |
+| `GET`  | `/health`        | Service health check        |
 
 ## Project Structure
 
@@ -80,7 +85,7 @@ cd frontend && npm run test
 │   │   └── config.py  # Application settings
 │   ├── tests/         # Unit tests
 │   └── app.py         # Main application
-├── frontend/          # Vue 3 application  
+├── frontend/          # Vue 3 application
 │   ├── src/
 │   │   ├── components/     # Vue components
 │   │   ├── composables/    # Composition API logic
