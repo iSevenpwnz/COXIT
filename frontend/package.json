@@ -11,10 +11,9 @@
     "build": "vue-tsc --build && vite build --config config/vite.config.ts",
     "preview": "vite preview --config config/vite.config.ts",
     "type-check": "vue-tsc --build",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage",
-    "postinstall": "cp config/npm/package-lock.json . || true"
+    "test": "vitest --config config/vitest.config.ts",
+    "test:ui": "vitest --ui --config config/vitest.config.ts",
+    "test:coverage": "vitest run --coverage --config config/vitest.config.ts"
   },
   "dependencies": {
     "vue": "^3.5.18"

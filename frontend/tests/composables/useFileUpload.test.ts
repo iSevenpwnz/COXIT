@@ -1,6 +1,18 @@
 import { describe, it, expect, vi } from 'vitest'
 import { useFileUpload } from '@/composables/useFileUpload'
 
+// Mock DragEvent for jsdom environment
+class MockDragEvent extends Event {
+  dataTransfer: DataTransfer | null = null
+
+  constructor(type: string, eventInitDict?: EventInit) {
+    super(type, eventInitDict)
+  }
+}
+
+// Add it to global scope
+global.DragEvent = MockDragEvent as any
+
 describe('useFileUpload', () => {
   describe('validateFile', () => {
     it('should validate PDF file successfully', () => {

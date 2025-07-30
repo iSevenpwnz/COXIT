@@ -1,7 +1,5 @@
 node_modules
-config/npm/package-lock.json
 .git
 README.md
 .env*
-dist
 coverage

@@ -31,7 +31,7 @@ OPENAI_API_KEY=your-key-here
 # Start application
 docker-compose up --build -d
 
-# Access at http://localhost:3000
+ Access at http://localhost:5173
 ```
 
 ## Development
