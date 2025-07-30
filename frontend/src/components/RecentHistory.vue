@@ -1,62 +1,48 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useApi, type HistoryItem } from '@/composables/useApi'
+import { formatDate, formatNumber } from '@/utils/formatters'
 
-interface HistoryItem {
-  id: string
-  filename: string
-  summary_file: string
-  created_at: string
-  pages: number
-  size_mb: number
-  text_length: number
-  images: number
-  tables: number
-}
+const { fetchHistory, fetchSummary } = useApi()
 
 const history = ref<HistoryItem[]>([])
 const isLoading = ref(false)
 const selectedSummary = ref<string>('')
 const showSummaryModal = ref(false)
+const error = ref<string | null>(null)
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-
-const fetchHistory = async () => {
+const loadHistory = async () => {
   isLoading.value = true
+  error.value = null
+  
   try {
-    const response = await fetch(`${API_BASE_URL}/history`)
-    if (response.ok) {
-      const data = await response.json()
-      history.value = data.history
+    const result = await fetchHistory()
+    
+    if (result.error) {
+      error.value = result.error
+    } else if (result.data) {
+      history.value = result.data
     }
-  } catch (error) {
-    console.error('Помилка завантаження історії:', error)
+  } catch (err) {
+    error.value = 'Failed to load history'
   } finally {
     isLoading.value = false
   }
 }
 
-const downloadSummary = async (summaryId: string) => {
+const viewSummary = async (summaryId: string) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/download/${summaryId}`)
-    if (response.ok) {
-      const data = await response.json()
-      selectedSummary.value = data.summary
+    const result = await fetchSummary(summaryId)
+    
+    if (result.error) {
+      error.value = result.error
+    } else if (result.data) {
+      selectedSummary.value = result.data
       showSummaryModal.value = true
     }
-  } catch (error) {
-    console.error('Помилка завантаження резюме:', error)
+  } catch (err) {
+    error.value = 'Failed to load summary'
   }
-}
-
-const formatDate = (isoString: string) => {
-  const date = new Date(isoString)
-  return date.toLocaleString('uk-UA', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
 }
 
 const closeSummaryModal = () => {
@@ -64,8 +50,12 @@ const closeSummaryModal = () => {
   selectedSummary.value = ''
 }
 
+const clearError = () => {
+  error.value = null
+}
+
 onMounted(() => {
-  fetchHistory()
+  loadHistory()
 })
 </script>
 
@@ -73,7 +63,7 @@ onMounted(() => {
   <div class="history-card">
     <div class="history-header">
       <h2>📚 Остання історія</h2>
-      <button @click="fetchHistory" class="refresh-btn" :disabled="isLoading">
+      <button @click="loadHistory" class="refresh-btn" :disabled="isLoading">
         🔄 Оновити
       </button>
     </div>
@@ -101,7 +91,7 @@ onMounted(() => {
             <p class="item-date">{{ formatDate(item.created_at) }}</p>
           </div>
           <button 
-            @click="downloadSummary(item.id)"
+            @click="viewSummary(item.id)"
             class="view-btn"
           >
             👁️ Переглянути
@@ -119,7 +109,7 @@ onMounted(() => {
           </div>
           <div class="stat-item">
             <span class="stat-icon">📝</span>
-            <span>{{ item.text_length }} сим.</span>
+            <span>{{ formatNumber(item.text_length) }} сим.</span>
           </div>
           <div class="stat-item">
             <span class="stat-icon">🖼️</span>

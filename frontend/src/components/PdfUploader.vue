@@ -1,78 +1,61 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useApi, type UploadResult } from '@/composables/useApi'
+import { useFileUpload } from '@/composables/useFileUpload'
+import { formatNumber } from '@/utils/formatters'
 
-const isDragging = ref(false)
+const { uploadFile } = useApi()
+const {
+  isDragging,
+  validationError,
+  handleDragOver,
+  handleDragLeave,
+  handleDrop,
+  handleFileSelect,
+  clearError
+} = useFileUpload()
+
 const isUploading = ref(false)
-const uploadResult = ref<any>(null)
-const errorMessage = ref('')
+const uploadResult = ref<UploadResult | null>(null)
+const uploadError = ref<string | null>(null)
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const processFileUpload = async (file: File | null) => {
+  if (!file) return
 
-const handleFileSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    uploadFile(target.files[0])
-  }
-}
-
-const handleDrop = (event: DragEvent) => {
-  event.preventDefault()
-  isDragging.value = false
-  
-  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-    uploadFile(event.dataTransfer.files[0])
-  }
-}
-
-const handleDragOver = (event: DragEvent) => {
-  event.preventDefault()
-  isDragging.value = true
-}
-
-const handleDragLeave = () => {
-  isDragging.value = false
-}
-
-const uploadFile = async (file: File) => {
-  if (file.type !== 'application/pdf') {
-    errorMessage.value = 'Будь ласка, оберіть PDF файл'
-    return
-  }
-
-  if (file.size > 50 * 1024 * 1024) {
-    errorMessage.value = 'Файл занадто великий (максимум 50MB)'
-    return
-  }
-
+  clearError()
+  uploadError.value = null
   isUploading.value = true
-  errorMessage.value = ''
   uploadResult.value = null
 
-  const formData = new FormData()
-  formData.append('file', file)
-
   try {
-    const response = await fetch(`${API_BASE_URL}/upload`, {
-      method: 'POST',
-      body: formData,
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || 'Помилка завантаження')
+    const result = await uploadFile(file)
+    
+    if (result.error) {
+      uploadError.value = result.error
+    } else if (result.data) {
+      uploadResult.value = result.data
     }
-
-    uploadResult.value = await response.json()
   } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : 'Невідома помилка'
+    uploadError.value = error instanceof Error ? error.message : 'Upload failed'
   } finally {
     isUploading.value = false
   }
 }
 
+const onFileSelect = (event: Event) => {
+  const file = handleFileSelect(event)
+  processFileUpload(file)
+}
+
+const onFileDrop = (event: DragEvent) => {
+  const file = handleDrop(event)
+  processFileUpload(file)
+}
+
 const resetUpload = () => {
   uploadResult.value = null
-  errorMessage.value = ''
+  uploadError.value = null
+  clearError()
 }
 </script>
 
@@ -84,7 +67,7 @@ const resetUpload = () => {
       <div 
         class="drop-zone"
         :class="{ 'dragging': isDragging, 'uploading': isUploading }"
-        @drop="handleDrop"
+        @drop="onFileDrop"
         @dragover="handleDragOver"
         @dragleave="handleDragLeave"
       >
@@ -103,15 +86,15 @@ const resetUpload = () => {
             id="file-input"
             type="file"
             accept=".pdf"
-            @change="handleFileSelect"
+            @change="onFileSelect"
             style="display: none"
           >
           <p class="file-info">Максимум 100 сторінок, 50MB</p>
         </div>
       </div>
       
-      <div v-if="errorMessage" class="error">
-        ❌ {{ errorMessage }}
+      <div v-if="validationError || uploadError" class="error">
+        ❌ {{ validationError?.message || uploadError }}
       </div>
     </div>
 
@@ -132,7 +115,7 @@ const resetUpload = () => {
         </div>
         <div class="stat">
           <span class="stat-label">Текст:</span>
-          <span class="stat-value">{{ uploadResult.text_length }} символів</span>
+          <span class="stat-value">{{ formatNumber(uploadResult.text_length) }} символів</span>
         </div>
         <div class="stat">
           <span class="stat-label">Зображення:</span>

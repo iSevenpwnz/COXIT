@@ -1,264 +1,249 @@
 # 📄 PDF Summary AI
 
-Потужний веб-застосунок для завантаження великих PDF файлів (до 100 сторінок, 50MB) та отримання стислих AI-резюме за допомогою OpenAI API.
+A powerful web application for uploading large PDF files (up to 100 pages, 50MB) and receiving concise AI-generated summaries using OpenAI API.
 
-## 🚀 Особливості
+## 🚀 Features
 
-- **📤 Завантаження PDF**: Користувачі можуть легко завантажувати PDF файли через drag & drop або файловий браузер
-- **🔍 Комплексний парсинг PDF**: Точне витягування контенту з PDF з повною підтримкою тексту, зображень та складних таблиць
-- **🤖 AI-резюме**: Інтеграція з OpenAI API для створення високоякісних резюме завантажених документів
-- **📚 Остання історія**: Відображення списку 5 останніх опрацьованих PDF з ключовими метаданими та можливістю перегляду резюме
+- **📤 PDF Upload**: Users can easily upload PDF files via drag & drop or file browser
+- **🔍 Comprehensive PDF Parsing**: Accurate content extraction from PDFs with full support for text, images, and complex tables
+- **🤖 AI Summarization**: Integration with OpenAI API to generate high-quality summaries of uploaded documents
+- **📚 Recent History**: Display of the last 5 processed PDFs with key metadata and summary viewing capability
 
-## 🛠 Технології
+## 🛠 Technology Stack
 
 ### Backend
-
-- **FastAPI** - Сучасний, швидкий веб-фреймворк для Python
-- **OpenAI API** - Для генерації AI-резюме
-- **PyPDF2, PyMuPDF, pdfplumber** - Для парсингу PDF файлів
-- **Uvicorn** - ASGI сервер
+- **FastAPI** - Modern, fast web framework for Python
+- **OpenAI API** - For AI summary generation
+- **PyPDF2, PyMuPDF, pdfplumber** - For PDF parsing
+- **Pydantic** - Data validation and serialization
+- **Uvicorn** - ASGI server
 
 ### Frontend
-
-- **Vue 3** - Прогресивний JavaScript фреймворк
-- **TypeScript** - Типізований JavaScript
-- **Vite** - Швидкий збирач проекту
-- **Pinia** - Стан менеджмент для Vue
+- **Vue 3** - Progressive JavaScript framework
+- **TypeScript** - Typed JavaScript for better development experience
+- **Vite** - Fast build tool and development server
+- **Composables** - Clean composition API patterns
 
 ### DevOps
+- **Docker** - Application containerization
+- **Nginx** - Web server for frontend
+- **Docker Compose** - Service orchestration
 
-- **Docker** - Контейнеризація застосунку
-- **Nginx** - Веб-сервер для frontend
-- **Docker Compose** - Оркестрація сервісів
+## 📋 Prerequisites
 
-## 📋 Передумови
+- Docker and Docker Compose
+- OpenAI API key
 
-- Docker та Docker Compose
-- OpenAI API ключ
+## 🚀 Quick Start
 
-## 🚀 Швидкий старт
-
-### 1. Клонування репозиторію
-
+### 1. Clone Repository
 \`\`\`bash
 git clone <repository-url>
 cd cotix_test
 \`\`\`
 
-### 2. Налаштування змінних оточення
-
+### 2. Environment Setup
 \`\`\`bash
-
-# Скопіюйте .env файл та додайте свій OpenAI API ключ
-
+# Copy environment file and add your OpenAI API key
 cp .env.example .env
 
-# Відредагуйте .env файл та додайте ваш OPENAI_API_KEY
-
+# Edit .env file with your OPENAI_API_KEY
 \`\`\`
 
-### 3. Запуск через Docker Compose
-
+### 3. Run with Docker Compose
 \`\`\`bash
-
-# Збірка та запуск всіх сервісів
-
+# Build and start all services
 docker-compose up --build
 
-# Або в фоновому режимі
-
+# Or run in background
 docker-compose up -d --build
 \`\`\`
 
-### 4. Доступ до застосунку
-
+### 4. Access Application
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
-- **API документація**: http://localhost:8000/docs
+- **API Documentation**: http://localhost:8000/docs
 
-## 🔧 Розробка
+## 🔧 Development
 
-### Backend
-
+### Backend Development
 \`\`\`bash
 cd backend
 
-# Створіть віртуальне середовище
-
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate # Linux/Mac
+source venv/bin/activate  # Linux/Mac
+# or
+venv\\Scripts\\activate  # Windows
 
-# або
-
-venv\\Scripts\\activate # Windows
-
-# Встановіть залежності
-
+# Install dependencies
 pip install -r requirements.txt
 
-# Запустіть сервер розробки
-
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# Run development server
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
 \`\`\`
 
-### Frontend
-
+### Frontend Development
 \`\`\`bash
 cd frontend
 
-# Встановіть залежності
-
+# Install dependencies
 npm install
 
-# Запустіть сервер розробки
-
+# Run development server
 npm run dev
 
-# Збірка для продакшну
-
+# Build for production
 npm run build
 
-# Тестування
-
-npm run test:unit
-npm run test:e2e
+# Format code
+npm run format
 \`\`\`
 
-## 📡 API Ендпоїнти
+## 📡 API Endpoints
 
 ### POST /upload
-
-Завантаження PDF файлу для обробки
-
-- **Тіло запиту**: MultipartForm з файлом
-- **Відповідь**: Метадані файлу та AI-резюме
+Upload PDF file for processing
+- **Request Body**: MultipartForm with file
+- **Response**: File metadata and AI summary
 
 ### GET /history
-
-Отримання останніх 5 опрацьованих PDF
-
-- **Відповідь**: Список файлів з метаданими
+Retrieve last 5 processed PDFs
+- **Response**: List of files with metadata
 
 ### GET /download/{summary_id}
-
-Отримання AI-резюме за ID
-
-- **Параметри**: summary_id (string)
-- **Відповідь**: Текст резюме
+Download AI summary by ID
+- **Parameters**: summary_id (string)
+- **Response**: Summary text
 
 ### GET /health
+Server health check
+- **Response**: Server status
 
-Перевірка стану сервера
-
-- **Відповідь**: Статус сервера
-
-## 🐳 Docker команди
+## 🐳 Docker Commands
 
 \`\`\`bash
-
-# Збірка образів
-
+# Build images
 docker-compose build
 
-# Запуск сервісів
-
+# Start services
 docker-compose up
 
-# Запуск у фоні
-
+# Run in background
 docker-compose up -d
 
-# Зупинка сервісів
-
+# Stop services
 docker-compose down
 
-# Перегляд логів
-
+# View logs
 docker-compose logs -f
 
-# Перестворення з нуля
-
+# Clean rebuild
 docker-compose down -v
 docker-compose up --build
 \`\`\`
 
-## 📁 Структура проекту
+## 📁 Project Structure
 
 \`\`\`
 cotix_test/
-├── backend/ # FastAPI backend
-│ ├── main.py # Головний файл застосунку
-│ ├── requirements.txt # Python залежності
-│ ├── Dockerfile # Docker образ для backend
-│ ├── .env # Змінні оточення
-│ └── .env.example # Приклад змінних оточення
-├── frontend/ # Vue.js frontend
-│ ├── src/
-│ │ ├── components/ # Vue компоненти
-│ │ ├── App.vue # Головний компонент
-│ │ ├── main.ts # Точка входу
-│ │ └── style.css # Глобальні стилі
-│ ├── package.json # Node.js залежності
-│ ├── Dockerfile # Docker образ для frontend
-│ ├── nginx.conf # Налаштування Nginx
-│ └── vite.config.ts # Конфігурація Vite
-├── storage/ # Зберігання файлів
-│ ├── pdfs/ # Завантажені PDF файли
-│ ├── summaries/ # Згенеровані резюме
-│ └── meta/ # Метадані файлів
-├── docker-compose.yml # Оркестрація Docker
-├── .env # Глобальні змінні оточення
-└── README.md # Документація проекту
+├── backend/                    # FastAPI backend
+│   ├── src/                   # Source code
+│   │   ├── api/              # API routes
+│   │   ├── services/         # Business logic
+│   │   ├── config.py         # Configuration
+│   │   ├── models.py         # Data models
+│   │   └── exceptions.py     # Custom exceptions
+│   ├── app.py                # Main application
+│   ├── requirements.txt      # Python dependencies
+│   ├── Dockerfile           # Docker image for backend
+│   ├── .env                 # Environment variables
+│   └── .env.example        # Environment template
+├── frontend/                  # Vue.js frontend
+│   ├── src/
+│   │   ├── components/      # Vue components
+│   │   ├── composables/     # Composition API logic
+│   │   ├── utils/          # Utility functions
+│   │   ├── App.vue         # Main component
+│   │   ├── main.ts         # Entry point
+│   │   └── style.css       # Global styles
+│   ├── package.json        # Node.js dependencies
+│   ├── Dockerfile          # Docker image for frontend
+│   ├── nginx.conf          # Nginx configuration
+│   └── vite.config.ts      # Vite configuration
+├── storage/                   # File storage
+│   ├── pdfs/               # Uploaded PDF files
+│   ├── summaries/          # Generated summaries
+│   └── meta/              # File metadata
+├── docker-compose.yml        # Docker orchestration
+├── .env                     # Global environment variables
+└── README.md               # Project documentation
 \`\`\`
 
-## 🔒 Безпека
+## 🏗 Architecture Principles
 
-- CORS налаштовано для дозволених доменів
-- Валідація типів файлів (тільки PDF)
-- Обмеження розміру файлів (50MB максимум)
-- Обмеження кількості сторінок (100 максимум)
-- Санітизація введених даних
+### Backend (SOLID Principles Applied)
+- **Single Responsibility**: Each service handles one specific domain
+- **Open/Closed**: Easy to extend with new file types or AI providers
+- **Liskov Substitution**: Interface-based design for services
+- **Interface Segregation**: Focused, specific interfaces
+- **Dependency Inversion**: Dependency injection for testability
 
-## 🚨 Усунення проблем
+### Frontend (Clean Architecture)
+- **Composables**: Reusable business logic
+- **Separation of Concerns**: UI, API, and utilities clearly separated
+- **Type Safety**: Full TypeScript implementation
+- **DRY Principle**: Utility functions for common operations
 
-### Помилки з OpenAI API
+## 🔒 Security Features
 
-- Переконайтеся, що ваш API ключ правильний
-- Перевірте квоти на вашому OpenAI акаунті
-- Переконайтеся, що у вас є доступ до GPT-3.5-turbo
+- CORS configured for allowed domains
+- File type validation (PDF only)
+- File size limits (50MB maximum)
+- Page count limits (100 pages maximum)
+- Input sanitization and validation
 
-### Проблеми з Docker
+## 🚨 Troubleshooting
 
+### OpenAI API Issues
+- Verify your API key is correct
+- Check your OpenAI account quotas
+- Ensure access to GPT-4o-mini model
+
+### Docker Issues
 \`\`\`bash
-
-# Очищення Docker кешу
-
+# Clean Docker cache
 docker system prune -a
 
-# Перестворення volumes
-
+# Recreate volumes
 docker-compose down -v
 docker volume prune
 \`\`\`
 
-### Помилки з PDF парсингом
+### PDF Parsing Issues
+- Ensure PDF is not password protected
+- File must be a valid PDF format
+- File size must not exceed 50MB
 
-- Переконайтеся, що PDF не захищений паролем
-- Файл повинен бути валідним PDF
-- Розмір файлу не повинен перевищувати 50MB
+## 📊 Performance
 
-## 📝 Ліцензія
+- **Backend**: Async processing with FastAPI
+- **Frontend**: Optimized build with Vite
+- **Docker**: Multi-stage builds for smaller images
+- **Caching**: Nginx static file caching
 
-Цей проект створено для технічного завдання COXIT.
+## 📝 License
 
-## 🤝 Вклад у розробку
+This project was created for COXIT technical assessment.
 
-1. Створіть fork репозиторію
-2. Створіть feature гілку (\`git checkout -b feature/AmazingFeature\`)
-3. Зробіть commit змін (\`git commit -m 'Add some AmazingFeature'\`)
-4. Push на гілку (\`git push origin feature/AmazingFeature\`)
-5. Відкрийте Pull Request
+## 🤝 Contributing
 
-## 📞 Підтримка
+1. Fork the repository
+2. Create a feature branch (\`git checkout -b feature/AmazingFeature\`)
+3. Commit your changes (\`git commit -m 'Add some AmazingFeature'\`)
+4. Push to the branch (\`git push origin feature/AmazingFeature\`)
+5. Open a Pull Request
 
-Якщо у вас виникли питання або проблеми, створіть issue в цьому репозиторії.
+## 📞 Support
+
+If you encounter any issues or have questions, please create an issue in this repository.
