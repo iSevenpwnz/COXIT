@@ -15,9 +15,10 @@ RUN apt-get update && apt-get install -y \
 
 # Copy project configuration
 COPY pyproject.toml .
+COPY requirements.txt .
 
 # Install dependencies with uv (much faster than pip)
-RUN uv pip install --system
+RUN uv pip install --system -r requirements.txt
 
 # Copy source code
 COPY . .
