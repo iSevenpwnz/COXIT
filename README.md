@@ -21,7 +21,7 @@ AI-powered PDF summarization service that processes large PDF files (up to 100 p
 
 ```bash
 # Clone and setup
-git clone <repository-url>
+git clone https://github.com/iSevenpwnz/COXIT.git
 cd cotix_test
 cp .env.example .env
 
