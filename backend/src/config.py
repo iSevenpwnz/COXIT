@@ -25,7 +25,7 @@ class Settings:
     
     # Storage paths
     BASE_DIR: Path = Path(__file__).parent.parent
-    STORAGE_DIR: Path = BASE_DIR / ".." / "storage"
+    STORAGE_DIR: Path = BASE_DIR / "storage"
     PDFS_DIR: Path = STORAGE_DIR / "pdfs"
     SUMMARIES_DIR: Path = STORAGE_DIR / "summaries"
     META_DIR: Path = STORAGE_DIR / "meta"
