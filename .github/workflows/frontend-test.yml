@@ -21,8 +21,12 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Clean node_modules and lock
+        run: |
+          rm -rf node_modules package-lock.json
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Run frontend tests
         run: npm run test
