@@ -22,7 +22,6 @@ AI-powered PDF summarization service that processes large PDF files (up to 100 p
 ```bash
 # Clone and setup
 git clone https://github.com/iSevenpwnz/COXIT.git
-cd cotix_test
 cp .env.example .env
 
 # Add your OpenAI API key to .env
