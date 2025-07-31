@@ -26,11 +26,8 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      - name: Set test env
+        run: echo "OPENAI_API_KEY=test" >> $GITHUB_ENV
+
       - name: Run backend tests
         run: pytest --maxfail=1 --disable-warnings
-
-# Best practices:
-# - Всі тести мають проходити до build/push/деплою.
-# - Для великих проектів — додай окремі jobs для lint/mypy.
-# - Для secrets використовуй GitHub Secrets.
-# - Не деплой на pull_request!

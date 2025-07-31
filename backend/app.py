@@ -5,14 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.config import settings
 from src.api.routes import router
 
-# Create FastAPI application
 app = FastAPI(
     title="PDF Summary AI",
     description="AI-powered PDF summarization service",
     version="1.0.0"
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
@@ -21,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API routes
 app.include_router(router)
 
 if __name__ == "__main__":

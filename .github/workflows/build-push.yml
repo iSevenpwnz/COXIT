@@ -34,8 +34,3 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/pdf-frontend:latest -f frontend/Dockerfile ./frontend
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/pdf-frontend:latest
 
-# Best practices:
-# - Build/push запускається лише після успішних тестів.
-# - Для rollback — тегуй образи (наприклад, за git commit hash).
-# - Для staging — окремий файл з іншими секретами.
-# - Не зберігай паролі у відкритому коді.
