@@ -1,0 +1,34 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run backend tests
+        run: pytest --maxfail=1 --disable-warnings
+
+# Best practices:
+# - Всі тести мають проходити до build/push/деплою.
+# - Для великих проектів — додай окремі jobs для lint/mypy.
+# - Для secrets використовуй GitHub Secrets.
+# - Не деплой на pull_request!
